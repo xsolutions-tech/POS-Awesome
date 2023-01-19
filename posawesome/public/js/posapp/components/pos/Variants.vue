@@ -1,6 +1,6 @@
 <template>
   <v-row justify="center">
-    <v-dialog v-model="varaintsDialog" max-width="600px">
+    <v-dialog v-model="varaintsDialog" max-width="1000px">
       <v-card min-height="500px">
         <v-card-title>
           <span class="headline primary--text">Select Item</span>
@@ -13,10 +13,10 @@
               <v-chip-group
                 v-model="filters[attr.attribute]"
                 active-class="green--text text--accent-4"
-                column
+                row
               >
-                <v-chip
-                  v-for="value in attr.values"
+              <!-- <v-col cols="6"
+              v-for="value in attr.values"
                   :key="value.abbr"
                   :value="value.attribute_value"
                   outlined
@@ -24,6 +24,35 @@
                   @click="updateFiltredItems"
                 >
                   {{ value.attribute_value }}
+                <v-autocomplete
+                  clearable
+                  dense
+                  auto-select-first
+                  color="primary"
+                  :label="frappe._('Attribute')"
+                  v-model="filters[attr.attribute]"
+                  :items="value.attribute_value"
+                  background-color="white"
+                  :no-data-text="__('Attribute not found')"
+                  hide-details
+                >
+                </v-autocomplete>
+              </v-col>  -->
+                <v-chip
+                  v-for="value in attr.values"
+                  :key="value.abbr"
+                  :value="value.attribute_value"
+                  outlined
+                  small
+                  class="ma-2"
+                  color="primary"
+                  pill
+                  @click="updateFiltredItems"
+                >
+                  {{ value.attribute_value }}
+                  <v-avatar right>
+          <v-icon>mdi-checkbox-marked-circle</v-icon>
+        </v-avatar>
                 </v-chip>
               </v-chip-group>
               <v-divider class="p-0 m-0"></v-divider>
@@ -80,6 +109,7 @@ export default {
     items: null,
     filters: {},
     filterdItems: [],
+    variants: [],
   }),
 
   computed: {
@@ -101,6 +131,17 @@ export default {
     formtCurrency(value) {
       value = parseFloat(value);
       return value.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+    },
+    getVaritans(){
+      this.parentItem.attributes.forEach((attr) => {
+        console.log(attr.attribute)
+        attr.values.forEach((value) => {  
+          if (attr.attribute){
+            console.log("true",value)
+            this.variants.push(value.abbr);
+          }
+        })
+      })
     },
     updateFiltredItems() {
       this.$nextTick(function () {
@@ -146,6 +187,7 @@ export default {
       this.parentItem = item || null;
       this.items = items;
       this.filters = {};
+      this.getVaritans();
       this.$nextTick(function () {
         this.filterdItems = this.variantsItems;
       });

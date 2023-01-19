@@ -64,12 +64,19 @@ def create_sales_order(doc):
         and doc.pos_profile
         and doc.is_pos
         and doc.posa_delivery_date
+        and doc.posa_time
+        and doc.posa_source
+        and doc.posa_branch
         and not doc.update_stock
         and frappe.get_value("POS Profile", doc.pos_profile, "posa_allow_sales_order")
     ):
         sales_order_doc = make_sales_order(doc.name)
         if sales_order_doc:
+            sales_order_doc.delivery_time = doc.posa_time
+            sales_order_doc.source = doc.posa_source
+            sales_order_doc.branch = doc.posa_branch
             sales_order_doc.posa_notes = doc.posa_notes
+            sales_order_doc.customer_notes = doc.customer_notes
             sales_order_doc.flags.ignore_permissions = True
             sales_order_doc.flags.ignore_account_permission = True
             sales_order_doc.save()
@@ -88,7 +95,6 @@ def create_sales_order(doc):
                 doc.items[i].sales_order = sales_order_doc.name
                 doc.items[i].so_detail = item.name
                 i += 1
-
 
 def make_sales_order(source_name, target_doc=None, ignore_permissions=True):
     def set_missing_values(source, target):

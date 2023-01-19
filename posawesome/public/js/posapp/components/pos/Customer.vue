@@ -121,6 +121,11 @@ export default {
 
   created: function () {
     this.$nextTick(function () {
+
+      evntBus.$on('update_customers', () => {
+        this.get_customer_names();
+      });
+
       evntBus.$on('register_pos_profile', (pos_profile) => {
         this.pos_profile = pos_profile;
         this.get_customer_names();
@@ -129,6 +134,9 @@ export default {
         this.customer = customer;
       });
       evntBus.$on('add_customer_to_list', (customer) => {
+        this.customers.push(customer);
+      });
+      evntBus.$on('set_customer_info_to_edit', (customer) => {
         this.customers.push(customer);
       });
       evntBus.$on('set_customer_readonly', (value) => {

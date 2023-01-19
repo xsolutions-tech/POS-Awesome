@@ -15,7 +15,7 @@
                   :label="frappe._('Customer Name')"
                   background-color="white"
                   hide-details
-                  readonly
+                
                   v-model="customer_info.name"
                 ></v-text-field>
               </v-col>
@@ -91,22 +91,36 @@ export default {
     },
 
     set_customer_info(field, value) {
+      
+      console.log(this.customer_info);
+      console.log(value);
+
       const vm = this;
       frappe.call({
         method: 'posawesome.posawesome.api.posapp.set_customer_info',
         args: {
           fieldname: field,
-          customer: this.customer_info.customer,
+          customer: vm.customer_info.customer_name,
           value: value,
         },
         callback: (r) => {
+
+          console.log(r);
+
           if (!r.exc) {
+            
             vm.customer_info[field] = value;
+            
+            console.log(vm.customer_info[field]);
+
             evntBus.$emit('show_mesage', {
               text: __('Customer contact updated successfully.'),
               color: 'success',
             });
-            frappe.utils.play_sound('submit');
+
+            //This is to refresh customers.
+            evntBus.$emit('update_customers');
+
           }
         },
       });

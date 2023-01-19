@@ -188,6 +188,18 @@
                       dense
                       outlined
                       color="primary"
+                      :label="frappe._('Description')"
+                      background-color="white"
+                      hide-details
+                      v-model="item.description"
+                      disabled
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="4">
+                    <v-text-field
+                      dense
+                      outlined
+                      color="primary"
                       :label="frappe._('QTY')"
                       background-color="white"
                       hide-details
@@ -680,7 +692,7 @@
                 color="success"
                 @click="show_payment"
                 dark
-                >{{ __('PAY') }}</v-btn
+                >{{ __('Place Order') }}</v-btn
               >
             </v-col>
             <v-col
@@ -728,7 +740,7 @@ export default {
       allItems: [],
       discount_percentage_offer_name: null,
       invoiceTypes: ['Invoice', 'Order'],
-      invoiceType: 'Invoice',
+      invoiceType: 'Order',
       itemsPerPage: 1000,
       expanded: [],
       singleExpand: true,
@@ -984,8 +996,8 @@ export default {
         this.invoice_doc = '';
         this.discount_amount = 0;
         this.additional_discount_percentage = 0;
-        this.invoiceType = 'Invoice';
-        this.invoiceTypes = ['Invoice', 'Order'];
+        this.invoiceType = 'Order';
+        this.invoiceTypes = ['Order', 'Order'];
       } else {
         if (data.is_return) {
           evntBus.$emit('set_customer_readonly', true);
@@ -1143,8 +1155,14 @@ export default {
       if (!this.validate()) {
         return;
       }
+      console.log("here is show payment")
+      console.log(this.invoiceType);
+
       evntBus.$emit('show_payment', 'true');
       const invoice_doc = this.proces_invoice();
+      
+      console.log(invoice_doc);
+
       evntBus.$emit('send_invoice_doc_payment', invoice_doc);
     },
 
@@ -2428,6 +2446,10 @@ export default {
 
   created() {
     evntBus.$on('register_pos_profile', (data) => {
+        if(sessionStorage.customer_name){
+            data.pos_profile.customer = sessionStorage.customer_name;
+            sessionStorage.removeItem("customer_name");
+        }
       this.pos_profile = data.pos_profile;
       this.customer = data.pos_profile.customer;
       this.pos_opening_shift = data.pos_opening_shift;
@@ -2437,15 +2459,19 @@ export default {
       this.currency_precision =
         frappe.defaults.get_default('currency_precision') || 2;
     });
+    
     evntBus.$on('add_item', (item) => {
       this.add_item(item);
     });
     evntBus.$on('update_customer', (customer) => {
       this.customer = customer;
     });
-    evntBus.$on('new_invoice', () => {
-      this.invoice_doc = '';
-      this.cancel_invoice();
+    evntBus.$on('new_invoice', (data) => {
+      
+      if(data != 'false'){
+        this.invoice_doc = '';
+        this.cancel_invoice();
+      }
     });
     evntBus.$on('load_invoice', (data) => {
       this.new_invoice(data);

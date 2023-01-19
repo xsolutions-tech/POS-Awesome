@@ -18,6 +18,22 @@
                   v-model="customer_name"
                 ></v-text-field>
               </v-col>
+              <!-- <v-col cols="6">
+                <v-autocomplete
+                  clearable
+                  dense
+                  auto-select-first
+                  color="primary"
+                  :label="frappe._('Sub District')"
+                  v-model="sd"
+                  :items="sds"
+                  background-color="white"
+                  :no-data-text="__('Sub District not found')"
+                  hide-details
+                >
+                </v-autocomplete>
+              </v-col>
+              
               <v-col cols="6">
                 <v-text-field
                   dense
@@ -27,7 +43,7 @@
                   hide-details
                   v-model="tax_id"
                 ></v-text-field>
-              </v-col>
+              </v-col> -->
               <v-col cols="6">
                 <v-text-field
                   dense
@@ -38,7 +54,7 @@
                   v-model="mobile_no"
                 ></v-text-field>
               </v-col>
-              <v-col cols="6">
+              <!-- <v-col cols="6">
                 <v-text-field
                   dense
                   color="primary"
@@ -89,7 +105,22 @@
                   >
                   </v-date-picker>
                 </v-menu>
-              </v-col>
+              </v-col> -->
+              <v-col cols="6">
+                <v-autocomplete
+                  clearable
+                  dense
+                  auto-select-first
+                  color="primary"
+                  :label="frappe._('District')"
+                  v-model="territory"
+                  :items="territorys"
+                  background-color="white"
+                  :no-data-text="__('District not found')"
+                  hide-details
+                >
+                </v-autocomplete>
+              </v-col> 
               <v-col cols="6">
                 <v-autocomplete
                   clearable
@@ -105,31 +136,22 @@
                 >
                 </v-autocomplete>
               </v-col>
-              <v-col cols="6">
-                <v-autocomplete
-                  clearable
-                  dense
-                  auto-select-first
-                  color="primary"
-                  :label="frappe._('Territory')"
-                  v-model="territory"
-                  :items="territorys"
-                  background-color="white"
-                  :no-data-text="__('Territory not found')"
-                  hide-details
-                >
-                </v-autocomplete>
-              </v-col>
             </v-row>
           </v-container>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="error" dark @click="close_dialog">{{
-            __('Close')
-          }}</v-btn>
+          <!-- <v-btn color="info" dark @click="tCheck">{{
+            __('Get District')
+          }}</v-btn> -->
+          <!-- <v-btn color="error" dark @click="clear">{{
+            __('Clear')
+          }}</v-btn> -->
           <v-btn color="success" dark @click="submit_dialog">{{
             __('Submit')
+          }}</v-btn>
+           <v-btn color="error" dark @click="close_dialog">{{
+            __('Close')
           }}</v-btn>
         </v-card-actions>
       </v-card>
@@ -138,6 +160,7 @@
 </template>
 
 <script>
+import { constants } from 'crypto';
 import { evntBus } from '../../bus';
 export default {
   data: () => ({
@@ -145,6 +168,9 @@ export default {
     pos_profile: '',
     customer_name: '',
     tax_id: '',
+    sd:'',
+    sds:[],
+    district:[],
     mobile_no: '',
     email_id: '',
     referral_code: '',
@@ -176,8 +202,51 @@ export default {
           }
         });
     },
+    getsds() {
+      if (this.sds.length > 0) return;
+      const vm = this;
+      const districts = this.district
+      console.log('Dict',districts)
+      frappe.db
+        .get_list('Sub District', {
+          fields: ['name','territory'],
+          page_length: 1000,
+        })
+        .then((data) => {
+          if (data.length > 0) {
+            data.forEach((el) => {
+              vm.sds.push(el.name);
+            });
+          }
+        });
+    
+    },
+    tCheck(){
+      const vm = this;
+      vm.territorys = [];
+      const terrs = this.district
+      frappe.db
+        .get_list('Sub District', {
+          fields: ['name','territory'],
+          page_length: 1000,
+        })
+        .then((data) => {
+          if (data.length > 0) {
+            data.forEach((el) => {
+              terrs.forEach((terr) => {
+              if (this.sd == el.name && terr == el.territory){
+              console.log(terr);
+              vm.territorys.push(terr);
+            }
+            })
+            });
+          }
+        });
+      // console.log(terrs)
+      // console.log('Global', this.sd)
+    },
     getCustomerTerritorys() {
-      if (this.territorys.length > 0) return;
+      if (this.district.length > 0) return;
       const vm = this;
       frappe.db
         .get_list('Territory', {
@@ -190,7 +259,11 @@ export default {
               vm.territorys.push(el.name);
             });
           }
-        });
+          console.log(vm.district)
+        });  
+    },
+    clear :function () {
+      this.territorys = [];
     },
     submit_dialog() {
       if (this.customer_name) {
@@ -231,6 +304,7 @@ export default {
           },
         });
         this.customerDialog = false;
+        evntBus.$emit('open_new_address', this.customer_name);
       }
     },
   },
@@ -243,6 +317,7 @@ export default {
     });
     this.getCustomerGroups();
     this.getCustomerTerritorys();
+    this.getsds();
   },
 };
 </script>

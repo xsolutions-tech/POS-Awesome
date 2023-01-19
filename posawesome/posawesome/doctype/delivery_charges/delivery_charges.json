@@ -88,7 +88,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-07-25 15:38:25.771590",
+ "modified": "2022-09-15 22:55:54.907020",
  "modified_by": "Administrator",
  "module": "POSAwesome",
  "name": "Delivery Charges",
@@ -103,6 +103,7 @@
    "read": 1,
    "report": 1,
    "role": "System Manager",
+   "select": 1,
    "share": 1,
    "write": 1
   }

@@ -121,6 +121,7 @@ export default {
             this.pos_opening_shift = r.message.pos_opening_shift;
             this.get_offers(this.pos_profile.name);
             evntBus.$emit('register_pos_profile', r.message);
+            console.log(r.message);
             evntBus.$emit('set_company', r.message.company);
             console.info('LoadPosProfile');
           } else {

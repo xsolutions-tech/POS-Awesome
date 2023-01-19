@@ -1,85 +1,33 @@
 <template>
   <div>
-    <v-card
-      class="selection mx-auto grey lighten-5"
-      style="max-height: 75vh; height: 75vh"
-    >
-      <v-progress-linear
-        :active="loading"
-        :indeterminate="loading"
-        absolute
-        top
-        color="info"
-      ></v-progress-linear>
+    <v-card class="selection mx-auto grey lighten-5" style="max-height: 75vh; height: 75vh">
+      <v-progress-linear :active="loading" :indeterminate="loading" absolute top color="info"></v-progress-linear>
       <v-row class="items px-2 py-1">
         <v-col class="pb-0 mb-2">
-          <v-text-field
-            dense
-            clearable
-            autofocus
-            outlined
-            color="primary"
-            :label="frappe._('Search Items')"
-            hint="Search by item code, serial number, batch no or barcode"
-            background-color="white"
-            hide-details
-            v-model="debounce_search"
-            @keydown.esc="esc_event"
-            @keydown.enter="enter_event"
-            ref="debounce_search"
-          ></v-text-field>
+          <v-text-field dense clearable autofocus outlined color="primary" :label="frappe._('Search Items')"
+            hint="Search by item code, serial number, batch no or barcode" background-color="white" hide-details
+            v-model="debounce_search" @keydown.esc="esc_event" @keydown.enter="enter_event" ref="debounce_search">
+          </v-text-field>
         </v-col>
         <v-col cols="3" class="pb-0 mb-2" v-if="pos_profile.posa_input_qty">
-          <v-text-field
-            dense
-            outlined
-            color="primary"
-            :label="frappe._('QTY')"
-            background-color="white"
-            hide-details
-            v-model.number="qty"
-            type="number"
-            @keydown.enter="enter_event"
-            @keydown.esc="esc_event"
-          ></v-text-field>
+          <v-text-field dense outlined color="primary" :label="frappe._('QTY')" background-color="white" hide-details
+            v-model.number="qty" type="number" @keydown.enter="enter_event" @keydown.esc="esc_event"></v-text-field>
         </v-col>
         <v-col cols="2" class="pb-0 mb-2" v-if="pos_profile.posa_new_line">
-          <v-checkbox
-            v-model="new_line"
-            color="accent"
-            value="true"
-            label="NLine"
-            dense
-            hide-details
-          ></v-checkbox>
+          <v-checkbox v-model="new_line" color="accent" value="true" label="NLine" dense hide-details></v-checkbox>
         </v-col>
         <v-col cols="12" class="pt-0 mt-0">
           <div fluid class="items" v-if="items_view == 'card'">
             <v-row dense class="overflow-y-auto" style="max-height: 67vh">
-              <v-col
-                v-for="(item, idx) in filtred_items"
-                :key="idx"
-                xl="2"
-                lg="3"
-                md="6"
-                sm="6"
-                cols="6"
-                min-height="50"
-              >
+              <v-col v-for="(item, idx) in filtred_items" :key="idx" xl="2" lg="3" md="6" sm="6" cols="6"
+                min-height="50">
                 <v-card hover="hover" @click="add_item(item)">
-                  <v-img
-                    :src="
-                      item.image ||
-                      '/assets/posawesome/js/posapp/components/pos/placeholder-image.png'
-                    "
-                    class="white--text align-end"
-                    gradient="to bottom, rgba(0,0,0,.2), rgba(0,0,0,.7)"
-                    height="100px"
-                  >
-                    <v-card-text
-                      v-text="item.item_name"
-                      class="text-subtitle-2 px-1 pb-2"
-                    ></v-card-text>
+                  <v-img :src="
+                    item.image ||
+                    '/assets/posawesome/js/posapp/components/pos/placeholder-image.png'
+                  " class="white--text align-end" gradient="to bottom, rgba(0,0,0,.2), rgba(0,0,0,.7)"
+                    height="100px">
+                    <v-card-text v-text="item.item_name" class="text-subtitle-2 px-1 pb-2"></v-card-text>
                   </v-img>
                   <v-card-text class="text--primary pa-1">
                     <div class="text-caption primary--text">
@@ -94,15 +42,8 @@
           <div fluid class="items" v-if="items_view == 'list'">
             <div class="my-0 py-0 overflow-y-auto" style="max-height: 65vh">
               <template>
-                <v-data-table
-                  :headers="getItmesHeaders()"
-                  :items="filtred_items"
-                  item-key="item_code"
-                  class="elevation-1"
-                  :items-per-page="itemsPerPage"
-                  hide-default-footer
-                  @click:row="add_item"
-                >
+                <v-data-table :headers="getItmesHeaders()" :items="filtred_items" item-key="item_code"
+                  class="elevation-1" :items-per-page="itemsPerPage" hide-default-footer @click:row="add_item">
                   <template v-slot:item.rate="{ item }">
                     {{ formtCurrency(item.rate) }}
                   </template>
@@ -118,38 +59,50 @@
     </v-card>
     <v-card class="cards mb-0 mt-3 pa-2 grey lighten-5">
       <v-row no-gutters align="center" justify="center">
-        <v-col cols="12">
-          <v-select
+        <v-col cols="12" style="
+        display: -webkit-inline-box;
+        overflow-x: scroll;">
+          <!-- <v-select
             :items="items_group"
             :label="frappe._('Items Group')"
             dense
             outlined
             hide-details
             v-model="item_group"
-          ></v-select>
+          ></v-select> -->
+          <div style="
+          background-image:url(https://png.pngtree.com/thumb_back/fh260/back_our/20190620/ourmid/pngtree-ice-cream-cartoon-white-poster-background-banner-image_161152.jpg);
+          cursor:pointer;
+          /* background: #4caf50; */
+          color:white;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          height: 70px;
+          border: 1px solid black;
+          inline-size: 134px;
+          overflow-wrap: break-word;
+          overflow: hidden;
+          margin-right: 8px;
+          " v-for='(item, index) in items_group' :key='index' @click="filtirle(item)">
+            <div style=" margin: 0; padding: 13px; text-align: center; font-size: 17px;">
+              {{ item }}
+            </div>
+          </div>
         </v-col>
         <v-col cols="3" class="mt-1">
-          <v-btn-toggle
-            v-model="items_view"
-            color="primary"
-            group
-            dense
-            rounded
-          >
-            <v-btn small value="list">{{ __('List') }}</v-btn>
+          <v-btn-toggle v-model="items_view" color="primary" group dense rounded>
             <v-btn small value="card">{{ __('Card') }}</v-btn>
+            <v-btn small value="list">{{ __('List') }}</v-btn>
           </v-btn-toggle>
         </v-col>
         <v-col cols="4" class="mt-2">
-          <v-btn small block color="primary" text @click="show_coupons"
-            >{{ couponsCount }} {{ __('Coupons') }}</v-btn
-          >
+          <v-btn small block color="primary" text @click="show_coupons">{{ couponsCount }} {{ __('Coupons') }}</v-btn>
         </v-col>
         <v-col cols="5" class="mt-2">
-          <v-btn small block color="primary" text @click="show_offers"
-            >{{ offersCount }} {{ __('Offers') }} : {{ appliedOffersCount }}
-            {{ __('Applied') }}</v-btn
-          >
+          <v-btn small block color="primary" text @click="show_offers">{{ offersCount }} {{ __('Offers') }} : {{
+          appliedOffersCount }}
+            {{ __('Applied') }}</v-btn>
         </v-col>
       </v-row>
     </v-card>
@@ -164,7 +117,7 @@ export default {
   data: () => ({
     pos_profile: '',
     flags: {},
-    items_view: 'list',
+    items_view: 'card',
     item_group: 'ALL',
     loading: false,
     items_group: ['ALL'],
@@ -196,6 +149,9 @@ export default {
   },
 
   methods: {
+    filtirle(item) {
+      this.item_group = item;
+    },
     show_offers() {
       evntBus.$emit('show_offers', 'true');
     },
@@ -508,7 +464,7 @@ export default {
   },
 
   created: function () {
-    this.$nextTick(function () {});
+    this.$nextTick(function () { });
     evntBus.$on('register_pos_profile', (data) => {
       this.pos_profile = data.pos_profile;
       this.get_items();
@@ -541,4 +497,5 @@ export default {
 </script>
 
 <style scoped>
+
 </style>
